@@ -23,7 +23,7 @@
     "@type": "RealEstateAgent",
     "name": "Craig Collette — Étienne at Deer Creek Meadows",
     "telephone": "+1-801-864-1655",
-    "email": "mailto:craig@equityrealestate.com",
+    "email": "mailto:thecolletteteam@gmail.com",
     "address": {
       "@type": "PostalAddress",
       "streetAddress": "9122 S Elderberry Ln",
@@ -119,20 +119,20 @@
     <section class="stats-bar" aria-label="Quick facts">
       <div class="container stats-grid">
         <div class="stat">
-          <span class="stat-value">Last Lots</span>
-          <span class="stat-label">Final buildable homesites in Provo Canyon</span>
+          <span class="stat-value">Gated Community</span>
+          <span class="stat-label">Private, secure homesites in Provo Canyon</span>
         </div>
         <div class="stat">
-          <span class="stat-value">Open Space</span>
-          <span class="stat-label">221 acres preserved</span>
+          <span class="stat-value">5 mi to Sundance</span>
+          <span class="stat-label">Resort, dining &amp; world-class recreation</span>
         </div>
         <div class="stat">
-          <span class="stat-value">45 min</span>
-          <span class="stat-label">To Salt Lake City International</span>
+          <span class="stat-value">Custom Build</span>
+          <span class="stat-label">Your builder · private pools permitted</span>
         </div>
         <div class="stat">
-          <span class="stat-value">River Access</span>
-          <span class="stat-label">Private tunnel to Provo River fly fishing</span>
+          <span class="stat-value">Protected Views</span>
+          <span class="stat-label">221 acres open space · never developed</span>
         </div>
       </div>
     </section>
@@ -459,7 +459,18 @@
         </aside>
 
         <div class="tour-form-panel reveal">
-          <form class="tour-form" id="tourForm" novalidate aria-label="Schedule site tour">
+          <form
+            class="tour-form"
+            id="tourForm"
+            action="https://formsubmit.co/thecolletteteam@gmail.com"
+            method="POST"
+            novalidate
+            aria-label="Schedule site tour"
+          >
+            <input type="hidden" name="_subject" value="New Site Tour Request — Étienne at Deer Creek Meadows" />
+            <input type="hidden" name="_template" value="table" />
+            <input type="hidden" name="_captcha" value="false" />
+            <input type="hidden" name="form_type" value="Schedule Site Tour" />
             <header class="tour-form-head">
               <div class="tour-form-title">
                 <h3>Schedule Site Tour</h3>
@@ -572,6 +583,7 @@
                   <button type="button" class="btn btn-ghost" data-tour-back>← Back</button>
                   <button type="submit" class="btn btn-primary btn-lg">Request Site Tour</button>
                 </div>
+                <p class="form-error" data-form-error hidden role="alert"></p>
                 <p class="form-disclaimer">By submitting, you agree to be contacted about your tour. No spam — ever.</p>
               </div>
             </div>

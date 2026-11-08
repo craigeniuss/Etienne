@@ -57,7 +57,8 @@
     });
   }
 
-  // Schedule Site Tour form
+  // Schedule Site Tour form → thecolletteteam@gmail.com (FormSubmit)
+  var FORM_SUBMIT_ENDPOINT = "https://formsubmit.co/ajax/thecolletteteam@gmail.com";
   var tourForm = document.getElementById("tourForm");
   if (tourForm) {
     var currentStep = 1;
@@ -205,21 +206,10 @@
       });
     });
 
-    tourForm.addEventListener("submit", function (e) {
-      e.preventDefault();
-      if (!validateStep2()) return;
+    var submitBtn = tourForm.querySelector('button[type="submit"]');
+    var formError = tourForm.querySelector("[data-form-error]");
 
-      var firstName = tourForm.querySelector("#firstName").value.trim();
-      var lastName = tourForm.querySelector("#lastName").value.trim();
-      var phone = tourForm.querySelector("#tourPhone").value.trim();
-      var email = tourForm.querySelector("#tourEmail").value.trim();
-      var date = tourForm.querySelector("#tourDate").value;
-      var time = tourForm.querySelector("#tourTime").value;
-      var agent = tourForm.querySelector('input[name="agent"]:checked').value;
-      var interests = Array.prototype.slice
-        .call(tourForm.querySelectorAll('input[name="interest"]:checked'))
-        .map(function (input) { return input.parentElement.textContent.trim(); });
-
+    function showSuccess(firstName, phone, email, date, time, agent, interests) {
       if (successCopy) {
         successCopy.textContent =
           "Thanks, " + firstName + " — Craig will confirm your tour within one business day.";
@@ -236,8 +226,88 @@
       }
 
       if (tourBody) tourBody.hidden = true;
-      if (successPanel) successPanel.hidden = false;
-      successPanel.focus();
+      if (successPanel) {
+        successPanel.hidden = false;
+        successPanel.focus();
+      }
+    }
+
+    tourForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (!validateStep2()) return;
+
+      if (formError) {
+        formError.hidden = true;
+        formError.textContent = "";
+      }
+
+      var firstName = tourForm.querySelector("#firstName").value.trim();
+      var lastName = tourForm.querySelector("#lastName").value.trim();
+      var phone = tourForm.querySelector("#tourPhone").value.trim();
+      var email = tourForm.querySelector("#tourEmail").value.trim();
+      var date = tourForm.querySelector("#tourDate").value;
+      var time = tourForm.querySelector("#tourTime").value;
+      var agent = tourForm.querySelector('input[name="agent"]:checked').value;
+      var message = tourForm.querySelector("#tourMessage").value.trim();
+      var interests = Array.prototype.slice
+        .call(tourForm.querySelectorAll('input[name="interest"]:checked'))
+        .map(function (input) { return input.parentElement.textContent.trim(); });
+
+      var payload = {
+        _subject: "New Site Tour Request — Étienne at Deer Creek Meadows",
+        _template: "table",
+        _captcha: "false",
+        _replyto: email,
+        form_type: "Schedule Site Tour",
+        name: firstName + " " + lastName,
+        firstName: firstName,
+        lastName: lastName,
+        phone: phone,
+        email: email,
+        preferred_date: formatDate(date),
+        preferred_time: formatTime(time),
+        working_with_agent: agent === "yes" ? "Yes" : "No",
+        lot_interest: interests.length ? interests.join(", ") : "—",
+        message: message || "—"
+      };
+
+      var originalLabel = submitBtn ? submitBtn.textContent : "";
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Sending…";
+      }
+
+      fetch(FORM_SUBMIT_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json"
+        },
+        body: JSON.stringify(payload)
+      })
+        .then(function (res) {
+          if (!res.ok) throw new Error("Form submit failed");
+          return res.json();
+        })
+        .then(function () {
+          showSuccess(firstName, phone, email, date, time, agent, interests);
+          tourForm.reset();
+          if (dateInput) dateInput.min = new Date().toISOString().split("T")[0];
+          setStep(1);
+        })
+        .catch(function () {
+          if (formError) {
+            formError.textContent =
+              "We couldn't send your request. Please call 801-864-1655 or try again in a moment.";
+            formError.hidden = false;
+          }
+        })
+        .finally(function () {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalLabel;
+          }
+        });
     });
 
     if (resetBtn) {
