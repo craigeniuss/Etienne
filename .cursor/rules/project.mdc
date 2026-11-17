@@ -1,0 +1,168 @@
+---
+description: Étienne at Deer Creek Meadows — Next.js marketing site goals, stack, standards, and implementation prompts
+alwaysApply: true
+---
+
+# Étienne at Deer Creek Meadows — Project Rules
+
+## Project
+
+Marketing and lead-generation website for **Étienne at Deer Creek Meadows**, a luxury mountain building-lot subdivision in Provo Canyon, Utah, near Sundance Resort. **22 lots remain.** Listing broker: **Craig**, Equity Real Estate.
+
+## Goals (priority order)
+
+1. Capture buyer leads
+2. Rank #1 on Google for Provo Canyon / Sundance land searches
+3. Load fast on mobile
+
+## Stack
+
+- Next.js 15 App Router
+- TypeScript
+- Tailwind CSS
+- Static generation wherever possible
+- Deployed on **Vercel**
+- **No unnecessary dependencies**
+
+## Rules
+
+- Every page has a unique title, meta description, one H1, canonical URL, and Open Graph tags.
+- All images use `next/image`, WebP/AVIF, with descriptive alt text.
+- Mobile-first design. Lighthouse **95+** for Performance, SEO, Accessibility, and Best Practices.
+- Every page includes a visible lead capture call to action.
+- **Design aesthetic:** refined alpine luxury — warm neutrals, deep forest green, stone gray, generous whitespace, elegant serif headings (e.g., Cormorant Garamond) with a clean sans body (e.g., Inter).
+- Every page footer shows **Equity Real Estate** brokerage name, license info placeholder, and **Equal Housing Opportunity** logo (Utah advertising requirement).
+- Keep all editable business data (lots, contact info, pricing) in `/content` or `/data` files so a non-developer can update it.
+
+---
+
+## Implementation prompts
+
+Use these prompts in order when building or extending the site.
+
+### Prompt 1: Scaffold
+
+Scaffold the project in this folder: Next.js 15 (App Router) + TypeScript + Tailwind CSS + ESLint, using `src/` directory. Set up `next/font` with Cormorant Garamond and Inter. Create a Tailwind theme with the color palette from the project rules. Create a `/data/site.ts` file with placeholders for: broker name, phone, text number, email, office address, brokerage license number, social links, GA4 ID, GTM ID, Meta Pixel ID. Create a `.env.example` listing every environment variable the project will need (Resend API key, CRM API key, lead notification email, Turnstile keys, Meta CAPI token). Initialize git with a sensible `.gitignore`. Confirm it runs with `npm run dev`.
+
+### Prompt 2: Lot data
+
+Create `/data/lots.ts` exporting a typed array of **22 lots**. Lot type fields: `lotNumber`, `slug` (e.g. `"lot-7"`), `address`, `acreage`, `squareFeet`, `price`, `status` (`"available" | "under-contract" | "sold"`), `views` (array, e.g. `"Mt. Timpanogos"`, `"Deer Creek Reservoir"`, `"Meadow"`), `slopeDescription`, `utilities` (water, power, sewer/septic, internet), `buildableAreaNotes`, `highlights` (3–5 bullets), `photos` (array of paths), `videoUrl` (optional), `latitude`, `longitude`, `mapPolygon` (SVG points string for the plat map), `plaPdfPath`.
+
+Fill with realistic placeholder data to edit later; mark every placeholder with a `TODO` comment. Also export helper functions: `getAvailableLots()`, `getLotBySlug()`, `lotsRemainingCount()`, and `priceRange()`.
+
+*(After this prompt, replace the placeholders with real lot data.)*
+
+### Prompt 3: Global layout and persistent CTAs
+
+Build the global layout:
+
+- **Header:** logo, nav (Lots, Map, Location, Building, Financing, Gallery, FAQ, Contact), and prominent **"Get the Lot Packet"** button. Collapses to an accessible mobile menu.
+- **Sticky mobile bottom bar** (mobile only): Call, Text, Schedule Tour using `tel:` and `sms:` links from `/data/site.ts`.
+- **Sticky desktop** "Schedule a Tour" button bottom-right.
+- **Footer:** contact info, quick links, **"X of 22 lots remaining"** from lots data, Equity Real Estate brokerage name, license placeholder, Equal Housing Opportunity logo, privacy policy link.
+- Create `/privacy` with a standard real estate lead-capture privacy policy (TCPA-compliant language for texts/calls).
+
+### Prompt 4: Home page
+
+Build the home page:
+
+1. Full-screen hero with autoplay muted looping background video (poster fallback, loads after LCP), headline *"Mountain Homesites Minutes from Sundance"*, subheadline, live **"Only X lots remaining"** badge, CTAs **"View Available Lots"** and **"Get the Lot Packet"**.
+2. Short intro on Provo Canyon lifestyle.
+3. Featured available lots grid (photo, lot number, acreage, price, views, status badge).
+4. Drive-time strip: Sundance, Provo, Park City, Salt Lake City, SLC Airport (placeholder minutes).
+5. **"Build Your Mountain Home"** section linking to builders page.
+6. Testimonial/credibility placeholder.
+7. Final full-width lead form (`<LeadForm />` placeholder; built in Prompt 8).
+
+Optimize hero for LCP: priority poster image, video lazy-loaded.
+
+### Prompt 5: Interactive lot map
+
+Build `/map`: interactive SVG plat map.
+
+- Background plat image (`/public/plat/plat.png` placeholder) with overlaid SVG polygons from `lots.ts` `mapPolygon`.
+- Color by status: available = forest green, under contract = amber, sold = gray. Legend included.
+- Hover tooltip (desktop): lot number, acreage, price. Tap (mobile): bottom sheet with **View Lot** and **Ask About This Lot**.
+- Filters: price, acreage, status, views. Filtered-out lots fade.
+- List view toggle with sortable cards (price, acreage).
+- Keyboard accessible with aria labels.
+
+Add `/lots` index using list view with filters.
+
+### Prompt 6: Individual lot pages
+
+Build `/lots/[slug]` statically generated for all 22 lots:
+
+- H1: *"Lot [#] – [acreage] Acres in Provo Canyon near Sundance"*
+- Photo gallery + lightbox; optional lite YouTube/Vimeo embed on click.
+- Key facts table; highlights; buildable area notes.
+- Plat highlight + Google Maps static image linking to Google Maps.
+- Plat PDF download **gated** via lead form modal.
+- Lead form pre-filled with *"Interested in Lot [#]"* (`lotNumber` hidden field).
+- **Similar Lots** (3 nearest by price/acreage).
+- Sold lots still render with **SOLD** and push to available lots (SEO).
+- Unique metadata per lot.
+
+### Prompt 7: Content pages
+
+Create these pages — unique SEO metadata, hero image, rich placeholder copy (500–900 words, luxury buyer tone, `TODO` to review), internal links to `/lots` and `/map`, lead form at bottom:
+
+- `/location` — Sundance, Deer Creek, Provo River, skiing, hiking, drive times, schools, amenities.
+- `/building` — approved builders from `/data/builders.ts`, design guidelines, CC&Rs/HOA, sample renderings.
+- `/utilities` — water, power, sewer/septic, internet, roads, snow removal, Utah County permits.
+- `/financing` — land vs construction loans, `/data/lenders.ts`, land loan calculator + **Get pre-qualified** CTA.
+- `/gallery` — masonry grid, seasonal filters, lightbox.
+- `/about` — broker bio, Equity Real Estate, credentials.
+- `/contact` — form, phone, text, email, scheduling embed, map.
+
+### Prompt 8: Lead capture system (most important)
+
+1. **`<LeadForm />`** variants: `packet` (default), `tour`, `lot-inquiry`, `contact`. Fields: first/last name, email, phone, timeline dropdown, optional message. Hidden: variant, `lotNumber`, page URL, UTM params (first-party cookie), referrer. TCPA consent checkbox. Client + server **zod** validation. Cloudflare Turnstile. Honeypot.
+
+2. **`/api/lead`:** validate + Turnstile; **Follow Up Boss** Events API via swappable `/lib/crm.ts`; **Resend** instant notification + buyer confirmation (packet variant includes `/packet/etienne-lot-packet.pdf`); redirect to `/thank-you?type=[variant]`; on CRM failure still send notification email.
+
+3. **`/thank-you`:** confirmation, packet download, Calendly embed, conversion event hook.
+
+4. **Lead form modal** openable from any button with variant/`lotNumber`.
+
+5. **Exit-intent:** desktop mouse leave viewport; mobile 45s or 60% scroll — Lot Packet offer; once per 7 days `localStorage`; not on `/thank-you`.
+
+6. **Calendly** from `/data/site.ts` on `/contact` and `/thank-you`, lazy-loaded.
+
+### Prompt 9: SEO technical layer
+
+- `generateMetadata` on all routes; `metadataBase` from `SITE_URL`; canonical; OG + Twitter.
+- Dynamic OG images per lot via `next/og`.
+- JSON-LD: Organization + RealEstateAgent, Place, Product/Offer per lot, BreadcrumbList, FAQPage on `/faq`.
+- `app/sitemap.ts`, `app/robots.ts`.
+- Breadcrumbs on inner pages.
+- `/faq` — 20 buyer Q&As (`TODO`), accessible accordion.
+- Semantic HTML, single H1, logical heading order.
+
+### Prompt 10: Blog
+
+MDX blog at `/guides`:
+
+- Posts in `/content/guides` with frontmatter.
+- Index + post pages with Article schema, TOC, related lots CTA, lead form.
+- **5 starter posts** (1,200+ words, `TODO`): build cost Provo Canyon 2026; buying land near Sundance; land/construction loans Utah; Provo Canyon vs Park City; year-round access.
+
+### Prompt 11: Tracking and analytics
+
+- GTM (`next/script`, afterInteractive) from `/data/site.ts`.
+- GA4 via GTM `dataLayer`: `generate_lead`, `packet_download`, `tour_booked`, `click_to_call`, `click_to_text`, `lot_view`, `map_lot_click`, `calculator_used`, `exit_popup_shown`, `exit_popup_converted`.
+- Meta Pixel + server CAPI in `/api/lead` with dedup `event_id`.
+- Microsoft Clarity; cookie consent gating non-essential scripts.
+- Document events in `/docs/tracking.md`.
+
+### Prompt 12: Performance and accessibility pass
+
+Production build + bundle analysis; lazy-load heavy code; `next/image` + sizes; defer third parties; contrast, focus, labels, keyboard on map/modals; custom **404** with links to available lots; report Lighthouse mobile for home, `/map`, one lot page; fix anything below 95.
+
+### Prompt 13: Deploy
+
+Step-by-step **Vercel**: private GitHub repo, import, env from `.env.example`, custom domain with www → apex, Resend DNS. `next.config` **301 redirects** from old URLs (`[PASTE OLD URLS]`). Post-launch: Search Console + Bing sitemap, forms E2E, Follow Up Boss, GA4/Meta events.
+
+### Prompt 14: Final QA
+
+Senior SEO + CRO audit vs these rules: CTAs, forms + fallbacks, schema (Rich Results Test), unique titles/descriptions, internal links, consolidated **TODO** report, 375px mobile, brokerage disclosures every page. Prioritized fix list; fix what you can in code.
