@@ -330,6 +330,87 @@
     }
   }
 
+  // Season slideshow
+  var slideshow = document.querySelector("[data-slideshow]");
+  if (slideshow) {
+    var slides = Array.prototype.slice.call(slideshow.querySelectorAll(".slideshow-slide"));
+    var dotsWrap = slideshow.querySelector("[data-slideshow-dots]");
+    var captionEl = slideshow.querySelector("[data-slideshow-caption]");
+    var prevBtn = slideshow.querySelector("[data-slideshow-prev]");
+    var nextBtn = slideshow.querySelector("[data-slideshow-next]");
+    var current = 0;
+    var timer = null;
+    var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    function captionFor(index) {
+      var slide = slides[index];
+      return slide ? slide.getAttribute("data-caption") || "" : "";
+    }
+
+    function goTo(index) {
+      if (!slides.length) return;
+      current = (index + slides.length) % slides.length;
+      slides.forEach(function (slide, i) {
+        slide.classList.toggle("is-active", i === current);
+      });
+      if (dotsWrap) {
+        dotsWrap.querySelectorAll(".slideshow-dot").forEach(function (dot, i) {
+          dot.classList.toggle("is-active", i === current);
+          dot.setAttribute("aria-current", i === current ? "true" : "false");
+        });
+      }
+      if (captionEl) captionEl.textContent = captionFor(current);
+    }
+
+    function next() { goTo(current + 1); }
+    function prev() { goTo(current - 1); }
+
+    function startAutoplay() {
+      if (reducedMotion || slides.length < 2) return;
+      stopAutoplay();
+      timer = window.setInterval(next, 6000);
+    }
+
+    function stopAutoplay() {
+      if (timer) window.clearInterval(timer);
+      timer = null;
+    }
+
+    if (dotsWrap) {
+      slides.forEach(function (_, i) {
+        var dot = document.createElement("li");
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "slideshow-dot" + (i === 0 ? " is-active" : "");
+        btn.setAttribute("aria-label", "Show slide " + (i + 1) + " of " + slides.length);
+        btn.setAttribute("aria-current", i === 0 ? "true" : "false");
+        btn.addEventListener("click", function () {
+          stopAutoplay();
+          goTo(i);
+          startAutoplay();
+        });
+        dot.appendChild(btn);
+        dotsWrap.appendChild(dot);
+      });
+    }
+
+    if (prevBtn) prevBtn.addEventListener("click", function () { stopAutoplay(); prev(); startAutoplay(); });
+    if (nextBtn) nextBtn.addEventListener("click", function () { stopAutoplay(); next(); startAutoplay(); });
+
+    slideshow.addEventListener("mouseenter", stopAutoplay);
+    slideshow.addEventListener("mouseleave", startAutoplay);
+    slideshow.addEventListener("focusin", stopAutoplay);
+    slideshow.addEventListener("focusout", startAutoplay);
+
+    slideshow.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowRight") { e.preventDefault(); stopAutoplay(); next(); startAutoplay(); }
+      if (e.key === "ArrowLeft") { e.preventDefault(); stopAutoplay(); prev(); startAutoplay(); }
+    });
+
+    goTo(0);
+    startAutoplay();
+  }
+
   // Map lightbox
   var mapModal = document.getElementById("mapModal");
   var mapTrigger = document.querySelector("[data-map-trigger]");
