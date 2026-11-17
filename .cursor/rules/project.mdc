@@ -56,113 +56,141 @@ Fill with realistic placeholder data to edit later; mark every placeholder with 
 
 Build the global layout:
 
-- **Header:** logo, nav (Lots, Map, Location, Building, Financing, Gallery, FAQ, Contact), and prominent **"Get the Lot Packet"** button. Collapses to an accessible mobile menu.
-- **Sticky mobile bottom bar** (mobile only): Call, Text, Schedule Tour using `tel:` and `sms:` links from `/data/site.ts`.
+- **Header:** logo, nav (Lots, Map, Location, Building, Financing, Gallery, FAQ, Contact), and a prominent **"Get the Lot Packet"** button. Collapses to an accessible mobile menu.
+- **Sticky mobile bottom bar** (visible only on mobile): Call, Text, Schedule Tour using `tel:` and `sms:` links from `/data/site.ts`.
 - **Sticky desktop** "Schedule a Tour" button bottom-right.
-- **Footer:** contact info, quick links, **"X of 22 lots remaining"** from lots data, Equity Real Estate brokerage name, license placeholder, Equal Housing Opportunity logo, privacy policy link.
+- **Footer:** contact info, quick links, **"X of 22 lots remaining"** live from lots data, Equity Real Estate brokerage name, license placeholder, Equal Housing Opportunity logo, privacy policy link.
 - Create `/privacy` with a standard real estate lead-capture privacy policy (TCPA-compliant language for texts/calls).
 
 ### Prompt 4: Home page
 
 Build the home page:
 
-1. Full-screen hero with autoplay muted looping background video (poster fallback, loads after LCP), headline *"Mountain Homesites Minutes from Sundance"*, subheadline, live **"Only X lots remaining"** badge, CTAs **"View Available Lots"** and **"Get the Lot Packet"**.
-2. Short intro on Provo Canyon lifestyle.
-3. Featured available lots grid (photo, lot number, acreage, price, views, status badge).
+1. Full-screen hero with autoplay muted looping background video (poster image fallback, loads after LCP), headline *"Mountain Homesites Minutes from Sundance"*, subheadline, live **"Only X lots remaining"** badge, and two CTAs: **"View Available Lots"** and **"Get the Lot Packet."**
+2. Short intro section on Provo Canyon lifestyle.
+3. Featured available lots grid (cards: photo, lot number, acreage, price, views, status badge).
 4. Drive-time strip: Sundance, Provo, Park City, Salt Lake City, SLC Airport (placeholder minutes).
-5. **"Build Your Mountain Home"** section linking to builders page.
-6. Testimonial/credibility placeholder.
-7. Final full-width lead form (`<LeadForm />` placeholder; built in Prompt 8).
+5. **"Build Your Mountain Home"** section linking to the builders page.
+6. Testimonial/credibility section placeholder.
+7. Final full-width lead form section (`<LeadForm />` placeholder; built in Prompt 8).
 
 Optimize hero for LCP: priority poster image, video lazy-loaded.
 
 ### Prompt 5: Interactive lot map
 
-Build `/map`: interactive SVG plat map.
+Build `/map`: an interactive SVG plat map.
 
-- Background plat image (`/public/plat/plat.png` placeholder) with overlaid SVG polygons from `lots.ts` `mapPolygon`.
-- Color by status: available = forest green, under contract = amber, sold = gray. Legend included.
-- Hover tooltip (desktop): lot number, acreage, price. Tap (mobile): bottom sheet with **View Lot** and **Ask About This Lot**.
-- Filters: price, acreage, status, views. Filtered-out lots fade.
-- List view toggle with sortable cards (price, acreage).
-- Keyboard accessible with aria labels.
+- Background plat image (`/public/plat/plat.png` placeholder) with an overlaid SVG where each lot is a polygon from `lots.ts` `mapPolygon`.
+- Color by status: available = forest green, under contract = amber, sold = gray. Include a legend.
+- Hover (desktop) shows tooltip: lot number, acreage, price. Tap (mobile) opens a bottom sheet with that info plus **"View Lot"** and **"Ask About This Lot"** buttons.
+- Filters above the map: price range, acreage range, status, views. Filtered-out lots fade.
+- List view toggle showing the same lots as sortable cards (price, acreage).
+- Fully keyboard accessible with aria labels.
 
-Add `/lots` index using list view with filters.
+Also add a `/lots` index page using the list view with filters.
 
 ### Prompt 6: Individual lot pages
 
-Build `/lots/[slug]` statically generated for all 22 lots:
+Build dynamic route `/lots/[slug]` statically generated for all 22 lots:
 
 - H1: *"Lot [#] – [acreage] Acres in Provo Canyon near Sundance"*
-- Photo gallery + lightbox; optional lite YouTube/Vimeo embed on click.
-- Key facts table; highlights; buildable area notes.
-- Plat highlight + Google Maps static image linking to Google Maps.
-- Plat PDF download **gated** via lead form modal.
-- Lead form pre-filled with *"Interested in Lot [#]"* (`lotNumber` hidden field).
-- **Similar Lots** (3 nearest by price/acreage).
-- Sold lots still render with **SOLD** and push to available lots (SEO).
-- Unique metadata per lot.
+- Photo gallery with lightbox; optional embedded video (lite YouTube/Vimeo embed, no load until click).
+- Key facts table: price, acreage, sq ft, views, slope, utilities, status.
+- Highlights bullets and buildable area notes.
+- Small map showing this lot highlighted on the plat, plus a Google Maps pin (static image, links to Google Maps).
+- Downloadable plat PDF (gated: clicking opens the lead form modal first).
+- Lead form pre-filled with *"Interested in Lot [#]"* (hidden field `lotNumber`).
+- **"Similar Lots"** section (3 nearest in price/acreage).
+- Sold lots still render but show **SOLD** and push users to available lots (keep the page for SEO).
+- Unique metadata per lot generated from data.
 
 ### Prompt 7: Content pages
 
-Create these pages — unique SEO metadata, hero image, rich placeholder copy (500–900 words, luxury buyer tone, `TODO` to review), internal links to `/lots` and `/map`, lead form at bottom:
+Create these pages, each with unique SEO metadata, a hero image, rich placeholder copy (500–900 words, written for luxury buyers and marked `TODO` to review), internal links to `/lots` and `/map`, and a lead form at the bottom:
 
-- `/location` — Sundance, Deer Creek, Provo River, skiing, hiking, drive times, schools, amenities.
-- `/building` — approved builders from `/data/builders.ts`, design guidelines, CC&Rs/HOA, sample renderings.
-- `/utilities` — water, power, sewer/septic, internet, roads, snow removal, Utah County permits.
-- `/financing` — land vs construction loans, `/data/lenders.ts`, land loan calculator + **Get pre-qualified** CTA.
-- `/gallery` — masonry grid, seasonal filters, lightbox.
-- `/about` — broker bio, Equity Real Estate, credentials.
+- `/location` — Sundance, Deer Creek Reservoir, Provo River fishing, skiing, hiking, drive times, schools, nearby amenities.
+- `/building` — approved builders (cards with logo, link, description from `/data/builders.ts`), design guidelines summary, CC&Rs and HOA summary with downloadable PDFs, sample home renderings.
+- `/utilities` — water, power, sewer/septic, internet, road access, winter snow removal, Utah County building permit process.
+- `/financing` — land loans vs construction loans explained, preferred lenders from `/data/lenders.ts`, and an interactive land loan payment calculator (price, down payment %, rate, term → monthly payment). Calculator results include a **"Get pre-qualified"** CTA.
+- `/gallery` — masonry grid of photos filterable by season (spring/summer/fall/winter) with lightbox.
+- `/about` — broker bio, Equity Real Estate, photo, credentials.
 - `/contact` — form, phone, text, email, scheduling embed, map.
 
 ### Prompt 8: Lead capture system (most important)
 
-1. **`<LeadForm />`** variants: `packet` (default), `tour`, `lot-inquiry`, `contact`. Fields: first/last name, email, phone, timeline dropdown, optional message. Hidden: variant, `lotNumber`, page URL, UTM params (first-party cookie), referrer. TCPA consent checkbox. Client + server **zod** validation. Cloudflare Turnstile. Honeypot.
+Build the complete lead capture system:
 
-2. **`/api/lead`:** validate + Turnstile; **Follow Up Boss** Events API via swappable `/lib/crm.ts`; **Resend** instant notification + buyer confirmation (packet variant includes `/packet/etienne-lot-packet.pdf`); redirect to `/thank-you?type=[variant]`; on CRM failure still send notification email.
+1. **`<LeadForm />`** component, variants: `packet` (default), `tour`, `lot-inquiry`, `contact`. Fields: first name, last name, email, phone, timeline dropdown (`0–6 months`, `6–12 months`, `12+ months`, `just exploring`), optional message. Hidden fields: variant, `lotNumber`, page URL, UTM source/medium/campaign/term/content (captured on first visit and stored in a first-party cookie), referrer. TCPA consent checkbox text for calls/texts. Client + server validation with **zod**. Cloudflare Turnstile invisible spam protection. Honeypot field.
 
-3. **`/thank-you`:** confirmation, packet download, Calendly embed, conversion event hook.
+2. API route **`/api/lead`** that:
+   - Validates input and verifies Turnstile.
+   - Sends the lead to **Follow Up Boss** via their Events API (`POST https://api.followupboss.com/v1/events`, type `"Property Inquiry"` or `"General Inquiry"`, source `"Etienne Website"`, include lot number, timeline, and UTM data). Make the CRM call a swappable module in `/lib/crm.ts`.
+   - Sends an instant notification email via **Resend** with all lead details.
+   - Sends the buyer an instant branded confirmation email via Resend; for the `packet` variant include the download link to `/packet/etienne-lot-packet.pdf`.
+   - Returns success; the front end redirects to `/thank-you?type=[variant]`.
+   - Logs errors and still returns a friendly message; never lose a lead (if CRM fails, the notification email must still send).
 
-4. **Lead form modal** openable from any button with variant/`lotNumber`.
+3. **`/thank-you`** page: confirmation message, packet download button (`packet` variant), **"Book a tour now"** scheduling embed, and fires a conversion event (wired in the tracking prompt).
 
-5. **Exit-intent:** desktop mouse leave viewport; mobile 45s or 60% scroll — Lot Packet offer; once per 7 days `localStorage`; not on `/thank-you`.
+4. **Lead form modal** that any button can open with a given variant / `lotNumber`.
 
-6. **Calendly** from `/data/site.ts` on `/contact` and `/thank-you`, lazy-loaded.
+5. **Exit-intent popup** (desktop: mouse leaves viewport; mobile: after 45 seconds or 60% scroll), offering the Lot Packet. Show once per 7 days via `localStorage`. Never show on `/thank-you`.
+
+6. **Scheduling:** embed Calendly (URL in `/data/site.ts`) on `/contact` and `/thank-you`, lazy-loaded.
 
 ### Prompt 9: SEO technical layer
 
-- `generateMetadata` on all routes; `metadataBase` from `SITE_URL`; canonical; OG + Twitter.
-- Dynamic OG images per lot via `next/og`.
-- JSON-LD: Organization + RealEstateAgent, Place, Product/Offer per lot, BreadcrumbList, FAQPage on `/faq`.
-- `app/sitemap.ts`, `app/robots.ts`.
-- Breadcrumbs on inner pages.
-- `/faq` — 20 buyer Q&As (`TODO`), accessible accordion.
-- Semantic HTML, single H1, logical heading order.
+Implement full technical SEO:
+
+- `generateMetadata` on all routes; `metadataBase` set from env `SITE_URL`; canonical URLs; Open Graph and Twitter cards.
+- Dynamic OG images per lot using `next/og` (lot photo, lot number, acreage, price, "Étienne at Deer Creek Meadows").
+- JSON-LD structured data: Organization + RealEstateAgent (site-wide), Place for the subdivision with geo coordinates, Product/Offer schema for each lot (price, availability mapped from status), BreadcrumbList on all inner pages, FAQPage on `/faq`.
+- `app/sitemap.ts` generating all pages, lots, and blog posts with `lastModified`.
+- `app/robots.ts` allowing all and referencing the sitemap.
+- Breadcrumb navigation component on inner pages.
+- Build `/faq` with 20 real buyer questions and answers (placeholders marked `TODO`) covering utilities, HOA, building timelines, snow access, financing, builders, taxes, short-term rental rules, and Sundance proximity, in an accessible accordion.
+- Semantic HTML, a single H1 per page, and logical heading order.
 
 ### Prompt 10: Blog
 
-MDX blog at `/guides`:
+Add an MDX-powered blog at `/guides`:
 
-- Posts in `/content/guides` with frontmatter.
-- Index + post pages with Article schema, TOC, related lots CTA, lead form.
-- **5 starter posts** (1,200+ words, `TODO`): build cost Provo Canyon 2026; buying land near Sundance; land/construction loans Utah; Provo Canyon vs Park City; year-round access.
+- Posts stored as `.mdx` files in `/content/guides` with frontmatter (`title`, `description`, `date`, `author`, `heroImage`, `keywords`).
+- Index page with cards; individual post pages with Article schema, author box, table of contents, related lots CTA, and lead form at the end.
+- Write **5 starter posts** (1,200+ words each, marked `TODO` to review), each linking internally to relevant lot pages and `/map`:
+  1. "Cost to Build a Home in Provo Canyon (2026 Guide)"
+  2. "Buying Land Near Sundance: What to Know Before You Buy"
+  3. "How Land Loans and Construction Loans Work in Utah"
+  4. "Provo Canyon vs. Park City: Where to Build Your Mountain Home"
+  5. "Year-Round Access and Living in Provo Canyon"
 
 ### Prompt 11: Tracking and analytics
 
-- GTM (`next/script`, afterInteractive) from `/data/site.ts`.
-- GA4 via GTM `dataLayer`: `generate_lead`, `packet_download`, `tour_booked`, `click_to_call`, `click_to_text`, `lot_view`, `map_lot_click`, `calculator_used`, `exit_popup_shown`, `exit_popup_converted`.
-- Meta Pixel + server CAPI in `/api/lead` with dedup `event_id`.
-- Microsoft Clarity; cookie consent gating non-essential scripts.
-- Document events in `/docs/tracking.md`.
+Implement tracking:
+
+- Google Tag Manager loaded with `next/script` (`afterInteractive`), ID from `/data/site.ts`.
+- GA4 via GTM. Push `dataLayer` events: `generate_lead` (with variant and `lotNumber`), `packet_download`, `tour_booked` (listen for Calendly `postMessage` events), `click_to_call`, `click_to_text`, `lot_view` (lot number), `map_lot_click`, `calculator_used`, `exit_popup_shown`, `exit_popup_converted`.
+- Meta Pixel with `PageView`, `ViewContent` on lot pages, `Lead` on form submit, `Schedule` on tour booking.
+- Meta Conversions API: in `/api/lead`, send a server-side Lead event with hashed email/phone and the same `event_id` as the browser pixel for deduplication.
+- Microsoft Clarity script (ID in `site.ts`).
+- Simple cookie consent banner (accept/decline) that gates non-essential tracking.
+- Document every event in `/docs/tracking.md` so conversions can be set up in GA4, Google Ads, and Meta.
 
 ### Prompt 12: Performance and accessibility pass
 
-Production build + bundle analysis; lazy-load heavy code; `next/image` + sizes; defer third parties; contrast, focus, labels, keyboard on map/modals; custom **404** with links to available lots; report Lighthouse mobile for home, `/map`, one lot page; fix anything below 95.
+Do a full performance and accessibility audit and fix everything:
+
+- Run a production build and analyze bundle size; remove or lazy-load anything heavy.
+- Verify all images are `next/image` with correct `sizes` attributes and `priority` only on LCP images.
+- Defer all third-party scripts (GTM, Clarity, Calendly, chat) until after interaction or idle.
+- Check color contrast, focus states, form labels, alt text, and keyboard navigation on the map and modals.
+- Add a custom 404 page with links to available lots.
+- Report the final Lighthouse mobile scores for home, `/map`, and one lot page, and list anything still below 95 with fixes.
 
 ### Prompt 13: Deploy
 
-Step-by-step **Vercel**: private GitHub repo, import, env from `.env.example`, custom domain with www → apex, Resend DNS. `next.config` **301 redirects** from old URLs (`[PASTE OLD URLS]`). Post-launch: Search Console + Bing sitemap, forms E2E, Follow Up Boss, GA4/Meta events.
+Walk through deploying to **Vercel** step by step: push this repo to a new private GitHub repo, import it into Vercel, add every environment variable from `.env.example`, connect the custom domain `[YOURDOMAIN.com]` with `www` redirecting to the root domain, and verify the Resend sending domain DNS records. If the old Étienne site has existing URLs, create `next.config` redirects (301) from those old URLs to the matching new pages: `[PASTE OLD URLS]`. Then provide a post-launch checklist: submit the sitemap in Google Search Console and Bing Webmaster Tools, test every form end-to-end, confirm leads appear in Follow Up Boss, and confirm GA4 and Meta events fire.
 
 ### Prompt 14: Final QA
 
-Senior SEO + CRO audit vs these rules: CTAs, forms + fallbacks, schema (Rich Results Test), unique titles/descriptions, internal links, consolidated **TODO** report, 375px mobile, brokerage disclosures every page. Prioritized fix list; fix what you can in code.
+Act as a senior SEO and conversion-rate reviewer. Audit the entire codebase and live site behavior against these project rules. Check: every page has a CTA, every form posts correctly and has fallbacks, schema validates (list what to test in Google Rich Results Test), no duplicate titles or descriptions, no broken internal links, all `TODO` placeholders listed in one report, mobile layout on 375px width, and brokerage disclosures on every page. Output a prioritized fix list, then fix everything that can be fixed in code.
